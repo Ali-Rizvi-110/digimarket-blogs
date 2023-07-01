@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const App = () => {
   const [title, setTitle] = useState('');
@@ -14,7 +15,8 @@ const App = () => {
     { title: '', content: '', image: null },
     { title: '', content: '', image: null },
   ]);
-
+  const navigate = useNavigate();
+  
   useEffect(()=>{
     console.log(paragraphs);
   }, [paragraphs])
@@ -38,7 +40,6 @@ const App = () => {
         [name]: value,
       };
     }
-
     setParagraphs(newParagraphs);
   };
 
@@ -63,8 +64,12 @@ const App = () => {
       for (let pair of formData.entries()) {
         console.log(pair[0] + ':', pair[1]);
       }
-
-await axios.post('http://localhost:3000/blogs', formData);
+      const token = sessionStorage.getItem('token');
+      await axios.post('http://localhost:3000/api/blogs', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       // Reset form fields
       setTitle('');
@@ -85,10 +90,19 @@ await axios.post('http://localhost:3000/blogs', formData);
       setMessage('Failed to create blog');
     }
   };
+  const handleLogout = () => {
+    // Clear any stored authentication-related data in the frontend
+    sessionStorage.removeItem('token');
+    // Redirect to the login page
+    navigate('/');
+  };
 
   return (
     <div>
       <h2>Create a Blog</h2>
+      <button onClick={()=>navigate('/changeadmin')}>Change Admin</button>
+      <button onClick={()=>navigate('/createblog')} >Create Blogs</button>
+      <button onClick={handleLogout} >LogOut</button>
       {message && <p>{message}</p>}
       <form onSubmit={handleSubmit}>
         <label>

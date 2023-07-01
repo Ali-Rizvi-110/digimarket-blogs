@@ -1,5 +1,28 @@
 const Blog = require('../models/blog');
 
+const authenticateToken = (req, res, next) => {
+  // Get the token from the Authorization header
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.sendStatus(401); // Unauthorized
+  }
+
+  // Verify the token
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) {
+      return res.sendStatus(403); // Forbidden
+    }
+
+    // Set the user data in the request object
+    req.user = user;
+
+    next();
+  });
+};
+
+
 const createBlog = async (req, res) => {
   try {
     const { title, description, category } = req.body;

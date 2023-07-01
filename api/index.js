@@ -15,11 +15,11 @@ mongoose.connect('mongodb://localhost/blogApp', { useNewUrlParser: true, useUnif
   })
   .catch((err) => {
     console.error('Error connecting to MongoDB:', err);
-  });
+});
 
-app.use('/blogs', blogRoutes);
-app.use('/admin', adminRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/blogs', blogRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(3000, () => {
   console.log('Server started on port 3000');
